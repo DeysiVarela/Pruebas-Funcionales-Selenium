@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+import pytest_html
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
@@ -30,7 +31,12 @@ def pytest_runtest_makereport(item, call):
     outcome = yield
     report = outcome.get_result()
     if report.when == "call" and report.failed and "driver" in item.funcargs:
+        browser = item.funcargs["driver"]
+        name = item.nodeid.replace("::", "_").replace("/", "_")
         screenshot_dir = Path("screenshots")
         screenshot_dir.mkdir(exist_ok=True)
-        screenshot_path = screenshot_dir / f"{item.nodeid.replace('::', '_').replace('/', '_')}.png"
-        item.funcargs["driver"].save_screenshot(str(screenshot_path))
+        browser.save_screenshot(str(screenshot_dir / f"{name}.png"))
+        # La misma captura queda incrustada dentro del reporte HTML
+        extras = getattr(report, "extras", [])
+        extras.append(pytest_html.extras.png(browser.get_screenshot_as_base64()))
+        report.extras = extras
