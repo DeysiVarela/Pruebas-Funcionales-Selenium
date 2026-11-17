@@ -9,6 +9,15 @@ from selenium.webdriver.chrome.options import Options
 def driver():
     options = Options()
     options.add_argument("--start-maximized")
+    # Evita la ventana de Chrome "cambia tu contraseña" al usar saucedemo
+    options.add_experimental_option(
+        "prefs",
+        {
+            "credentials_enable_service": False,
+            "profile.password_manager_enabled": False,
+            "profile.password_manager_leak_detection": False,
+        },
+    )
 
     browser = webdriver.Chrome(options=options)
     browser.implicitly_wait(0)
