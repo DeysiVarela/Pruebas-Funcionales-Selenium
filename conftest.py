@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pytest
 import pytest_html
+import os
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
@@ -9,7 +10,12 @@ from selenium.webdriver.chrome.options import Options
 @pytest.fixture
 def driver():
     options = Options()
-    options.add_argument("--start-maximized")
+    if os.getenv("HEADLESS") == "1":
+        # Modo headless: Chrome trabaja sin abrir ventana
+        options.add_argument("--headless=new")
+        options.add_argument("--window-size=1920,1080")
+    else:
+        options.add_argument("--start-maximized")
     # Evita la ventana de Chrome "cambia tu contraseña" al usar saucedemo
     options.add_experimental_option(
         "prefs",
