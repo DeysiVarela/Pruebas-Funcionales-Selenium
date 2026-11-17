@@ -29,4 +29,4 @@ def test_complete_purchase(driver):
     checkout_page.fill_customer_information("Deysi", "Varela", "760001")
     checkout_page.finish_order()
 
-    assert checkout_page.confirmation_message() == "Thank you for your order!"
+    assert checkout_page.confirmation_message() == "Gracias por su compra"
