@@ -1,0 +1,30 @@
+name: pruebas-selenium
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chrome, firefox]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: python -m pytest --browser ${{ matrix.browser }}
+        env:
+          HEADLESS: "1"
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: evidencias-${{ matrix.browser }}
+          path: |
+            reports/
+            screenshots/
